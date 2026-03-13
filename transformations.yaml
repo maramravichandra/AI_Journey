@@ -1,0 +1,63 @@
+sources:
+  - source_table1
+  - source_table2
+
+transformations:
+  - type: ctas
+    target: temp_table1
+    source: source_table1
+    sql: select * from source_table1
+    description: Creating temp table from source_table1
+
+  - type: ctas
+    target: temp_table2
+    source: source_table2
+    sql: select * from source_table2
+    description: Creating temp table from source_table2
+
+  - type: add-or-update-columns
+    target: temp_table3
+    source: temp_table1
+    columns:
+      - new_col1: old_col
+      - new_col2: old_col2
+    description: Adding new columns to the table
+
+  - type: drop-columns
+    target: temp_table4
+    source: temp_table2
+    columns:
+      - old_col1
+      - old_col2
+    description: Dropping columns from the table
+
+  - type: rename-columns
+    target: temp_table5
+    source: temp_table3
+    columns:
+      - old_col3: new_col
+    description: Renaming columns in the table
+
+  - type: ctas
+    target: final_temp_table
+    source: temp_table5, temp_table4
+    sql: select * from temp_table5 union all select * from temp_table4
+    description: Creating final temp table from temp_table4
+
+writes:
+  - type: append
+    target: iceberg_table1
+    query: select * from final_temp_table
+
+  - type: overwrite
+    target: iceberg_table2
+    query: select * from final_temp_table where col1 = 'value1'
+
+  - type: merge
+    target: iceberg_table3
+    using: (select * from final_temp_table where col2 = 'value2') s
+    on: t.id = s.id
+    when-matched:
+      - then update set t.name = 'ravi'
+    when-not-matched:
+      - then insert

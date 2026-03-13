@@ -1,0 +1,8 @@
+[project]
+name = "rc-algebra"
+version = "1.0"
+authors = [
+    {name = "Ravichandra Reddy Maramreddy", email = "ravichandra.maram@gmail.com"}
+]
+
+[tool.to]

@@ -1,0 +1,16 @@
+# catalog.yml
+
+# Configure the data sources. E.g. integrate CSV files, connect to
+# SQL databases and many more.
+# As a workaround the input and output data sources cannot have the same name.
+# Therefore the "_"-suffix is added
+
+Stock_:
+  type: pandas.CSVDataSet
+  filepath: data/01_raw/stock.csv
+  layer: Inventory
+
+Products_:
+  type: pandas.CSVDataSet
+  filepath: data/01_raw/products.csv
+  layer: Inventory
